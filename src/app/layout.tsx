@@ -38,10 +38,14 @@ export default function RootLayout({
         >
           <div
             id="root"
-            className="relative flex min-h-screen flex-col bg-background"
+            className="relative flex flex-col min-h-screen bg-background"
           >
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex justify-center flex-1 my-8 lg:my-12">
+              <div className="w-full max-w-screen-xl px-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
+            </main>
             <Footer />
           </div>
         </ThemeProvider>
