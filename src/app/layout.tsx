@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/header';
@@ -13,13 +13,6 @@ export const metadata: Metadata = {
     default: 'Wuthering Waves Tools',
   },
   description: 'Various tools for Wuthering Waves',
-};
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
-  ],
 };
 
 export default function RootLayout({
