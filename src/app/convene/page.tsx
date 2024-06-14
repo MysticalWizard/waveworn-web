@@ -14,8 +14,11 @@ export default function Page() {
         <h1 className="text-4xl font-extrabold scroll-m-20">Convene Tracker</h1>
         <p>Track your convene history!</p>
       </div>
-      <div>
+      <div className="space-x-4">
         <Button>
+          <Link href="/convene/import">Import Convenes</Link>
+        </Button>
+        <Button variant={'secondary'}>
           <Link href="/">Home</Link>
         </Button>
       </div>
