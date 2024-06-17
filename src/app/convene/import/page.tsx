@@ -17,7 +17,8 @@ export default function Page() {
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [isScriptCopied, setIsScriptCopied] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-  const [gachaData, setGachaData] = useState<any>(null);
+  const [gachaData, setGachaData] = useState<any[]>([]);
+  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
 
   async function handleImport(): Promise<void> {
     if (isBusy) return;
@@ -36,7 +37,7 @@ export default function Page() {
 
       validateUrl(url);
       const queryParams = extractQueryParams(url);
-      const data = await fetchGachaData(queryParams);
+      const data = await fetchAllGachaData(queryParams);
       setGachaData(data);
     } catch (error: unknown) {
       handleError(error);
@@ -62,6 +63,18 @@ export default function Page() {
     return queryParams;
   }
 
+  async function fetchAllGachaData(queryParams: {
+    [key: string]: any;
+  }): Promise<any[]> {
+    const fetchPromises = [];
+
+    for (let i = 1; i <= 6; i++) {
+      fetchPromises.push(fetchGachaData({ ...queryParams, cardPoolType: i }));
+    }
+
+    return Promise.all(fetchPromises);
+  }
+
   async function fetchGachaData(queryParams: {
     [key: string]: any;
   }): Promise<any> {
@@ -72,7 +85,7 @@ export default function Page() {
       },
       body: JSON.stringify({
         cardPoolId: queryParams['resources_id'],
-        cardPoolType: 1,
+        cardPoolType: queryParams['cardPoolType'],
         languageCode: 'en',
         playerId: queryParams['player_id'],
         recordId: queryParams['record_id'],
@@ -149,15 +162,28 @@ export default function Page() {
           {isBusy ? 'Importing...' : 'Import'}
         </Button>
       </div>
-      {gachaData && (
+      {gachaData.length > 0 && (
         <div className="mt-4">
           <h2 className="text-2xl font-bold">Gacha Data</h2>
-          <ul className="list-disc list-inside">
-            {Object.entries(gachaData).map(([key, value]) => (
-              <li key={key}>
-                <strong>{key}:</strong> {JSON.stringify(value)}
-              </li>
+          <div className="flex space-x-2 mb-4">
+            {gachaData.map((data, index) => (
+              <Button
+                key={data.cardPoolId} // Use unique identifier as key
+                onClick={() => setSelectedDataIndex(index)}
+                variant={selectedDataIndex === index ? 'default' : 'secondary'}
+              >
+                Card Pool Type {index + 1}
+              </Button>
             ))}
+          </div>
+          <ul className="list-disc list-inside">
+            {Object.entries(gachaData[selectedDataIndex]).map(
+              ([key, value]) => (
+                <li key={key}>
+                  <strong>{key}:</strong> {JSON.stringify(value)}
+                </li>
+              ),
+            )}
           </ul>
         </div>
       )}
