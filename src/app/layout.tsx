@@ -1,18 +1,23 @@
 import './globals.css';
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Header } from '@/components/header';
+
 import { Footer } from '@/components/footer';
+import { Header } from '@/components/header';
+import { ThemeProvider } from '@/components/theme-provider';
+import { siteConfig } from '@/config/site';
+
+export const runtime = 'edge';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Wuthering Waves Tools',
-    default: 'Wuthering Waves Tools',
+    template: `%s | ${siteConfig.name}`,
+    default: siteConfig.name,
   },
-  description: 'Various tools for Wuthering Waves',
+  description: siteConfig.description,
 };
 
 export default function RootLayout({

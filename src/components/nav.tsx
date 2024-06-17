@@ -15,6 +15,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 
 export function Nav({
@@ -40,7 +41,7 @@ export function Nav({
           <div className="relative aspect-square">
             <Image src="/icon.png" width={32} height={32} alt="" />
           </div>
-          <span>Wuthering Waves Tools</span>
+          <span>{siteConfig.title}</span>
         </Link>
         {navItems.map((item) => (
           <Link
@@ -110,7 +111,7 @@ export function Nav({
                     alt=""
                   />
                 </div>
-                <span>WuWa Tools</span>
+                <span>{siteConfig.title}</span>
               </Link>
             </SheetClose>
           </SheetFooter>
