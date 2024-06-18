@@ -104,7 +104,6 @@ export function Nav({
               <Link href="/" className="flex items-center gap-2">
                 <div className="relative aspect-square">
                   <Image
-                    className="invert dark:invert-0"
                     src="/icon.png"
                     width={32}
                     height={32}
