@@ -122,8 +122,8 @@ export default function Page() {
       <Alert>
         <AlertTitle>Read Me!</AlertTitle>
         <AlertDescription>
-          Please open your convene history page in game first before following
-          the instructions!
+          Please open your convene history page in Wuthering Waves before
+          following the instructions!
         </AlertDescription>
       </Alert>
       <div>
