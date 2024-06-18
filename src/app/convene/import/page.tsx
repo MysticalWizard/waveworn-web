@@ -130,7 +130,7 @@ export default function Page() {
         <h2 className="text-2xl font-bold">Instructions</h2>
         <p>Copy the PowerShell script below and run it in your PowerShell.</p>
         <div className="flex flex-row mb-2 space-x-2">
-          <pre className="bg-gray-100 p-4 rounded-md flex-grow overflow-auto whitespace-pre-wrap text-sm dark:bg-neutral-800 dark:text-white">
+          <pre className="flex-grow p-4 overflow-auto text-sm whitespace-pre-wrap bg-gray-100 rounded-md dark:bg-neutral-800 dark:text-white">
             {PS_SCRIPT}
           </pre>
           <Button
@@ -165,7 +165,7 @@ export default function Page() {
       {gachaData.length > 0 && (
         <div className="mt-4">
           <h2 className="text-2xl font-bold">Gacha Data</h2>
-          <div className="flex space-x-2 mb-4">
+          <div className="flex mb-4 space-x-2">
             {gachaData.map((data, index) => (
               <Button
                 key={data.cardPoolId} // Use unique identifier as key
