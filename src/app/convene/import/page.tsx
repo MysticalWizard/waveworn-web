@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -17,8 +18,7 @@ export default function Page() {
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [isScriptCopied, setIsScriptCopied] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-  const [gachaData, setGachaData] = useState<any[]>([]);
-  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
+  const router = useRouter();
 
   async function handleImport(): Promise<void> {
     if (isBusy) return;
@@ -38,7 +38,8 @@ export default function Page() {
       validateUrl(url);
       const queryParams = extractQueryParams(url);
       const data = await fetchAllGachaData(queryParams);
-      setGachaData(data);
+      localStorage.setItem('gachaData', JSON.stringify(data)); // Save to localStorage
+      router.push('/convene'); // Redirect to /convene
     } catch (error: unknown) {
       handleError(error);
     } finally {
@@ -143,6 +144,7 @@ export default function Page() {
         </div>
         <p>Paste your convene history URL below.</p>
         <Input
+          name="url-input"
           type="url"
           className="flex-grow"
           placeholder="Paste URL here"
@@ -162,31 +164,6 @@ export default function Page() {
           {isBusy ? 'Importing...' : 'Import'}
         </Button>
       </div>
-      {gachaData.length > 0 && (
-        <div className="mt-4">
-          <h2 className="text-2xl font-bold">Gacha Data</h2>
-          <div className="flex mb-4 space-x-2">
-            {gachaData.map((data, index) => (
-              <Button
-                key={data.cardPoolId} // Use unique identifier as key
-                onClick={() => setSelectedDataIndex(index)}
-                variant={selectedDataIndex === index ? 'default' : 'secondary'}
-              >
-                Card Pool Type {index + 1}
-              </Button>
-            ))}
-          </div>
-          <ul className="list-disc list-inside">
-            {Object.entries(gachaData[selectedDataIndex]).map(
-              ([key, value]) => (
-                <li key={key}>
-                  <strong>{key}:</strong> {JSON.stringify(value)}
-                </li>
-              ),
-            )}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }
