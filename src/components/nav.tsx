@@ -103,12 +103,7 @@ export function Nav({
             <SheetClose asChild>
               <Link href="/" className="flex items-center gap-2">
                 <div className="relative aspect-square">
-                  <Image
-                    src="/icon.png"
-                    width={32}
-                    height={32}
-                    alt=""
-                  />
+                  <Image src="/icon.png" width={32} height={32} alt="" />
                 </div>
                 <span>{siteConfig.title}</span>
               </Link>
