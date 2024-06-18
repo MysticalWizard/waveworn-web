@@ -41,7 +41,7 @@ export function Nav({
           <div className="relative aspect-square">
             <Image src="/icon.png" width={32} height={32} alt="" />
           </div>
-          <span>{siteConfig.title}</span>
+          <span>{siteConfig.name}</span>
         </Link>
         {navItems.map((item) => (
           <Link
@@ -105,7 +105,7 @@ export function Nav({
                 <div className="relative aspect-square">
                   <Image src="/icon.png" width={32} height={32} alt="" />
                 </div>
-                <span>{siteConfig.title}</span>
+                <span>{siteConfig.name}</span>
               </Link>
             </SheetClose>
           </SheetFooter>
