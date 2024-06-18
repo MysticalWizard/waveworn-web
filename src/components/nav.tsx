@@ -18,6 +18,17 @@ import {
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 
+const LogoImage = (
+  <Image
+    src="/icon.png"
+    alt={siteConfig.name}
+    width={256}
+    height={256}
+    style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+    priority
+  />
+);
+
 export function Nav({
   className,
   ...props
@@ -38,9 +49,7 @@ export function Nav({
         {...props}
       >
         <Link href="/" className="flex items-center gap-2">
-          <div className="relative aspect-square">
-            <Image src="/icon.png" width={32} height={32} alt="" />
-          </div>
+          <div className="relative w-8 h-8 aspect-square">{LogoImage}</div>
           <span>{siteConfig.name}</span>
         </Link>
         {navItems.map((item) => (
@@ -71,7 +80,7 @@ export function Nav({
               Navigate through the application using the links below.
             </SheetDescription>
           </SheetHeader>
-          <div className="flex flex-col gap-4 py-4">
+          <div className="flex flex-col py-4 gap-4">
             <SheetClose asChild>
               <Link
                 href="/"
@@ -102,9 +111,7 @@ export function Nav({
           <SheetFooter>
             <SheetClose asChild>
               <Link href="/" className="flex items-center gap-2">
-                <div className="relative aspect-square">
-                  <Image src="/icon.png" width={32} height={32} alt="" />
-                </div>
+                <div className="relative w-8 h-8">{LogoImage}</div>
                 <span>{siteConfig.name}</span>
               </Link>
             </SheetClose>
