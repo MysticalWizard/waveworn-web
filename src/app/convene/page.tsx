@@ -30,6 +30,11 @@ export default function Page() {
   const [gachaData, setGachaData] = useState<GachaItem[][]>([]);
   const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [starFilter, setStarFilter] = useState({
+    '3': true,
+    '4': true,
+    '5': true,
+  });
 
   const fetchGachaData = useCallback(
     async (
@@ -102,8 +107,8 @@ export default function Page() {
     items: GachaItem[];
     pityCounts: { fiveStar: number; fourStar: number };
   } => {
-    let fiveStarPity = 1;
-    let fourStarPity = 1;
+    let fiveStarPity = 0;
+    let fourStarPity = 0;
 
     const itemsWithPity = data
       .slice()
@@ -113,14 +118,14 @@ export default function Page() {
 
         if (item.qualityLevel === 5) {
           itemWithPity.pity = fiveStarPity;
-          fiveStarPity = 1;
-          fourStarPity = 1;
+          fiveStarPity = 0;
+          fourStarPity = 0;
         } else if (item.qualityLevel === 4) {
           itemWithPity.pity = fourStarPity;
-          fourStarPity = 1;
+          fourStarPity = 0;
           fiveStarPity++;
         } else {
-          itemWithPity.pity = 1; // 3-star pity is always 1
+          itemWithPity.pity = 0; // 3-star pity is always 0
           fourStarPity++;
           fiveStarPity++;
         }
@@ -133,6 +138,19 @@ export default function Page() {
       items: itemsWithPity,
       pityCounts: { fiveStar: fiveStarPity, fourStar: fourStarPity },
     };
+  };
+
+  const handleStarFilterChange = (star: keyof typeof starFilter) => {
+    if (
+      Object.values(starFilter).filter(Boolean).length === 1 &&
+      starFilter[star]
+    ) {
+      return; // Prevent all filters from being disabled
+    }
+    setStarFilter((prevFilter) => ({
+      ...prevFilter,
+      [star]: !prevFilter[star],
+    }));
   };
 
   return (
@@ -155,13 +173,52 @@ export default function Page() {
           <div className="flex mb-4 space-x-2">
             {gachaData.map((_, index) => (
               <Button
-                key={index}
+                key={`pool-type-${index}`}
                 onClick={() => setSelectedDataIndex(index)}
                 variant={selectedDataIndex === index ? 'default' : 'secondary'}
               >
                 Card Pool Type {index + 1}
               </Button>
             ))}
+          </div>
+          <div className="flex mb-4 space-x-2">
+            <div className="flex flex-col">
+              <div>Current pity counts: </div>
+              <div>
+                5-star:{' '}
+                {
+                  calculatePityCounts(gachaData[selectedDataIndex]).pityCounts
+                    .fiveStar
+                }
+              </div>
+              <div>
+                4-star:{' '}
+                {
+                  calculatePityCounts(gachaData[selectedDataIndex]).pityCounts
+                    .fourStar
+                }
+              </div>
+            </div>
+          </div>
+          <div className="flex mb-4 space-x-2">
+            <Button
+              onClick={() => handleStarFilterChange('5')}
+              variant={starFilter['5'] ? 'default' : 'secondary'}
+            >
+              5 Star
+            </Button>
+            <Button
+              onClick={() => handleStarFilterChange('4')}
+              variant={starFilter['4'] ? 'default' : 'secondary'}
+            >
+              4 Star
+            </Button>
+            <Button
+              onClick={() => handleStarFilterChange('3')}
+              variant={starFilter['3'] ? 'default' : 'secondary'}
+            >
+              3 Star
+            </Button>
           </div>
           <Table>
             <TableCaption>A list of your gacha data.</TableCaption>
@@ -173,19 +230,26 @@ export default function Page() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {calculatePityCounts(gachaData[selectedDataIndex]).items.map(
-                (item, idx) => (
-                  <TableRow key={idx}>
+              {calculatePityCounts(gachaData[selectedDataIndex])
+                .items.filter(
+                  (item) =>
+                    starFilter[
+                      item.qualityLevel.toString() as keyof typeof starFilter
+                    ],
+                )
+                .map((item, idx) => (
+                  <TableRow key={`gacha-item-${item.name}-${item.time}-${idx}`}>
                     <TableCell
                       className={`font-medium ${getTextColor(item.qualityLevel)}`}
                     >
                       {item.name}
                     </TableCell>
                     <TableCell>{item.time}</TableCell>
-                    <TableCell className="text-right">{item.pity}</TableCell>
+                    <TableCell className="text-right">
+                      {item.pity + 1}
+                    </TableCell>
                   </TableRow>
-                ),
-              )}
+                ))}
             </TableBody>
           </Table>
         </div>
