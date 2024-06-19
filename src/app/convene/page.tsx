@@ -3,6 +3,15 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '@/components/ui/table';
 
 const API_SERVER_URL = 'https://gmserver-api.aki-game2.net/gacha/record/query';
 
@@ -76,15 +85,15 @@ export default function Page() {
     }
   }, [fetchAllGachaData]);
 
-  const getBorderColor = (qualityLevel: number): string => {
+  const getTextColor = (qualityLevel: number): string => {
     const colors: Record<number, string> = {
-      1: 'border-gray-400',
-      2: 'border-green-400',
-      3: 'border-blue-400',
-      4: 'border-purple-400',
-      5: 'border-yellow-400',
+      1: 'text-gray-400',
+      2: 'text-green-400',
+      3: 'text-blue-400',
+      4: 'text-purple-400',
+      5: 'text-yellow-400',
     };
-    return colors[qualityLevel] || 'border-gray-200';
+    return colors[qualityLevel] || 'text-gray-200';
   };
 
   const calculatePityCounts = (
@@ -154,22 +163,31 @@ export default function Page() {
               </Button>
             ))}
           </div>
-          <div className="space-y-4">
-            {calculatePityCounts(gachaData[selectedDataIndex]).items.map(
-              (item, idx) => (
-                <div
-                  key={idx}
-                  className={`border-2 rounded-lg ${getBorderColor(item.qualityLevel)}`}
-                >
-                  <div className="flex flex-row justify-between px-4 py-2">
-                    <p className="pl-2 text-left">{item.name}</p>
-                    <p className="pl-2 text-right">{item.time}</p>
-                    <p className="flex-shrink-0 text-left">{item.pity}</p>
-                  </div>
-                </div>
-              ),
-            )}
-          </div>
+          <Table>
+            <TableCaption>A list of your gacha data.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Time</TableHead>
+                <TableHead className="text-right">Pity</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {calculatePityCounts(gachaData[selectedDataIndex]).items.map(
+                (item, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell
+                      className={`font-medium ${getTextColor(item.qualityLevel)}`}
+                    >
+                      {item.name}
+                    </TableCell>
+                    <TableCell>{item.time}</TableCell>
+                    <TableCell className="text-right">{item.pity}</TableCell>
+                  </TableRow>
+                ),
+              )}
+            </TableBody>
+          </Table>
         </div>
       ) : isFetching ? (
         <p>Loading Gacha data...</p>
