@@ -46,7 +46,7 @@ export default function Page() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           cardPoolId: queryParams['resources_id'],
-          cardPoolType: cardPoolType,
+          cardPoolType,
           languageCode: 'en',
           playerId: queryParams['player_id'],
           recordId: queryParams['record_id'],
@@ -114,7 +114,7 @@ export default function Page() {
       .slice()
       .reverse()
       .map((item) => {
-        const itemWithPity = { ...item };
+        const itemWithPity = { ...item, pity: item.pity ?? 0 };
 
         if (item.qualityLevel === 5) {
           itemWithPity.pity = fiveStarPity;
@@ -246,7 +246,7 @@ export default function Page() {
                     </TableCell>
                     <TableCell>{item.time}</TableCell>
                     <TableCell className="text-right">
-                      {item.pity + 1}
+                      {(item.pity ?? 0) + 1}
                     </TableCell>
                   </TableRow>
                 ))}
