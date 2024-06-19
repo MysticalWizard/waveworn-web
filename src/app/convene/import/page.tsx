@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -10,8 +10,6 @@ import { Input } from '@/components/ui/input';
 const PS_SCRIPT: string = `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex "&{$((New-Object System.Net.WebClient).DownloadString('https://static.mystwiz.net/wutheringwaves/getlink.ps1'))}"`;
 const VALID_URL_PATH: string =
   'https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html';
-const API_SERVER_URL: string =
-  'https://gmserver-api.aki-game2.net/gacha/record/query';
 
 export default function Page() {
   const [inputUrl, setInputUrl] = useState<string>('');
@@ -37,8 +35,7 @@ export default function Page() {
 
       validateUrl(url);
       const queryParams = extractQueryParams(url);
-      const data = await fetchAllGachaData(queryParams);
-      localStorage.setItem('gachaData', JSON.stringify(data)); // Save to localStorage
+      localStorage.setItem('gachaQueryParams', JSON.stringify(queryParams)); // Save query params to localStorage
       router.push('/convene'); // Redirect to /convene
     } catch (error: unknown) {
       handleError(error);
@@ -62,39 +59,6 @@ export default function Page() {
     });
 
     return queryParams;
-  }
-
-  async function fetchAllGachaData(queryParams: {
-    [key: string]: any;
-  }): Promise<any[]> {
-    const fetchPromises = [];
-
-    for (let i = 1; i <= 6; i++) {
-      fetchPromises.push(fetchGachaData({ ...queryParams, cardPoolType: i }));
-    }
-
-    return Promise.all(fetchPromises);
-  }
-
-  async function fetchGachaData(queryParams: {
-    [key: string]: any;
-  }): Promise<any> {
-    const response = await fetch(API_SERVER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        cardPoolId: queryParams['resources_id'],
-        cardPoolType: queryParams['cardPoolType'],
-        languageCode: 'en',
-        playerId: queryParams['player_id'],
-        recordId: queryParams['record_id'],
-        serverId: queryParams['svr_id'],
-      }),
-    });
-
-    return response.json();
   }
 
   async function copyPowerShellScript(): Promise<void> {
