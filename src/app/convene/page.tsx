@@ -90,6 +90,16 @@ export default function Page() {
     }
   }, [fetchAllGachaData]);
 
+  const getButtonColor = (star: number, selected: boolean): string => {
+    if (!selected) return '';
+    const colors: Record<number, string> = {
+      3: 'bg-blue-400 hover:bg-blue-500',
+      4: 'bg-purple-400 hover:bg-purple-500',
+      5: 'bg-yellow-400 hover:bg-yellow-500',
+    };
+    return colors[star] || 'bg-gray-200';
+  };
+
   const getTextColor = (qualityLevel: number): string => {
     const colors: Record<number, string> = {
       1: 'text-gray-400',
@@ -141,17 +151,16 @@ export default function Page() {
   };
 
   const handleStarFilterChange = (star: keyof typeof starFilter) => {
-    if (
-      Object.values(starFilter).filter(Boolean).length === 1 &&
-      starFilter[star]
-    ) {
-      return; // Prevent all filters from being disabled
-    }
     setStarFilter((prevFilter) => ({
       ...prevFilter,
       [star]: !prevFilter[star],
     }));
   };
+
+  const selectedGachaData = gachaData[selectedDataIndex];
+  const totalConveneCount = selectedGachaData?.length || 0;
+  const totalAsteriteSpent = totalConveneCount * 160;
+  const noFiltersSelected = !Object.values(starFilter).some(Boolean);
 
   return (
     <div className="flex flex-col shrink">
@@ -183,37 +192,37 @@ export default function Page() {
           </div>
           <div className="flex mb-4 space-x-2">
             <div className="flex flex-col">
-              <div>Current pity counts: </div>
+              <div>
+                Total convene count: {totalConveneCount} (asterite x{' '}
+                {totalAsteriteSpent})
+              </div>
               <div>
                 5-star:{' '}
-                {
-                  calculatePityCounts(gachaData[selectedDataIndex]).pityCounts
-                    .fiveStar
-                }
+                {calculatePityCounts(selectedGachaData).pityCounts.fiveStar}
               </div>
               <div>
                 4-star:{' '}
-                {
-                  calculatePityCounts(gachaData[selectedDataIndex]).pityCounts
-                    .fourStar
-                }
+                {calculatePityCounts(selectedGachaData).pityCounts.fourStar}
               </div>
             </div>
           </div>
           <div className="flex mb-4 space-x-2">
             <Button
+              className={getButtonColor(5, starFilter['5'])}
               onClick={() => handleStarFilterChange('5')}
               variant={starFilter['5'] ? 'default' : 'secondary'}
             >
               5 Star
             </Button>
             <Button
+              className={getButtonColor(4, starFilter['4'])}
               onClick={() => handleStarFilterChange('4')}
               variant={starFilter['4'] ? 'default' : 'secondary'}
             >
               4 Star
             </Button>
             <Button
+              className={getButtonColor(3, starFilter['3'])}
               onClick={() => handleStarFilterChange('3')}
               variant={starFilter['3'] ? 'default' : 'secondary'}
             >
@@ -221,7 +230,15 @@ export default function Page() {
             </Button>
           </div>
           <Table>
-            <TableCaption>A list of your gacha data.</TableCaption>
+            <TableCaption>
+              {noFiltersSelected ? (
+                <div className="text-red-500">
+                  Please select at least one rarity filter.
+                </div>
+              ) : (
+                'A list of your gacha data.'
+              )}
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -230,7 +247,7 @@ export default function Page() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {calculatePityCounts(gachaData[selectedDataIndex])
+              {calculatePityCounts(selectedGachaData)
                 .items.filter(
                   (item) =>
                     starFilter[
