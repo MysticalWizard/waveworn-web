@@ -1,6 +1,6 @@
-import { siteConfig } from '@/config/site';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { siteConfig } from '@/config/site';
 
 export default function Home() {
   return (
