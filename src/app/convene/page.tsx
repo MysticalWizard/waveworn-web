@@ -93,9 +93,9 @@ export default function Page() {
   const getButtonColor = (star: number, selected: boolean): string => {
     if (!selected) return '';
     const colors: Record<number, string> = {
-      3: 'bg-blue-400 hover:bg-blue-500',
-      4: 'bg-purple-400 hover:bg-purple-500',
-      5: 'bg-yellow-400 hover:bg-yellow-500',
+      3: 'bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90',
+      4: 'bg-purple-500 hover:bg-purple-500/90 dark:hover:bg-purple-500/90',
+      5: 'bg-yellow-500 hover:bg-yellow-500/90 dark:hover:bg-yellow-500/90',
     };
     return colors[star] || 'bg-gray-200';
   };
