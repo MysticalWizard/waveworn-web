@@ -4,6 +4,14 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
   Table,
   TableCaption,
   TableHeader,
@@ -26,15 +34,25 @@ interface GachaItem {
   pity?: number;
 }
 
+const conveneType = [
+  'Featured Resonator',
+  'Featured Weapon',
+  'Standard Resonator',
+  'Standard Weapon',
+  'Beginner Convene',
+  "Beginner's Choice",
+  'Giveback Custom',
+];
+
 export default function Page() {
   const [gachaData, setGachaData] = useState<GachaItem[][]>([]);
-  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [starFilter, setStarFilter] = useState({
-    '3': true,
-    '4': true,
-    '5': true,
-  });
+  const [starFilters, setStarFilters] = useState<
+    Record<number, Record<string, boolean>>
+  >({});
+  const [expandedConveneRecord, setExpandedConveneRecord] = useState<
+    Record<number, boolean>
+  >({});
 
   const fetchGachaData = useCallback(
     async (
@@ -70,6 +88,11 @@ export default function Page() {
 
         const data = await Promise.all(fetchPromises);
         setGachaData(data);
+        const initialFilters: Record<number, Record<string, boolean>> = {};
+        data.forEach((_, index) => {
+          initialFilters[index] = { '3': false, '4': true, '5': true };
+        });
+        setStarFilters(initialFilters);
       } catch (error) {
         console.error(
           'An error occurred while fetching the gacha data:',
@@ -126,6 +149,7 @@ export default function Page() {
       .map((item) => {
         const itemWithPity = { ...item, pity: item.pity ?? 0 };
 
+        // Reset pity counter for the pulled item's rarity and all lower rarities
         if (item.qualityLevel === 5) {
           itemWithPity.pity = fiveStarPity;
           fiveStarPity = 0;
@@ -135,7 +159,7 @@ export default function Page() {
           fourStarPity = 0;
           fiveStarPity++;
         } else {
-          itemWithPity.pity = 0; // 3-star pity is always 0
+          itemWithPity.pity = 0;
           fourStarPity++;
           fiveStarPity++;
         }
@@ -150,17 +174,73 @@ export default function Page() {
     };
   };
 
-  const handleStarFilterChange = (star: keyof typeof starFilter) => {
-    setStarFilter((prevFilter) => ({
-      ...prevFilter,
-      [star]: !prevFilter[star],
+  const handleStarFilterChange = (
+    index: number,
+    star: keyof Record<string, boolean>,
+  ) => {
+    setStarFilters((prevFilters) => ({
+      ...prevFilters,
+      [index]: {
+        ...prevFilters[index],
+        [star]: !prevFilters[index][star],
+      },
     }));
   };
 
-  const selectedGachaData = gachaData[selectedDataIndex];
-  const totalConveneCount = selectedGachaData?.length || 0;
-  const totalAsteriteSpent = totalConveneCount * 160;
-  const noFiltersSelected = !Object.values(starFilter).some(Boolean);
+  const handleExpandCollapse = (index: number) => {
+    setExpandedConveneRecord((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const noFiltersSelected = (index: number) =>
+    !Object.values(starFilters[index]).some(Boolean);
+
+  const calculateSummaryStats = () => {
+    let totalPulls = 0;
+    let totalAsterite = 0;
+    let totalFiveStars = 0;
+    let totalFourStars = 0;
+    let fiveStarPitySum = 0;
+    let fourStarPitySum = 0;
+
+    gachaData.forEach((poolData) => {
+      const { items } = calculatePityCounts(poolData);
+      totalPulls += items.length;
+      totalAsterite += items.length * 160;
+      const fiveStars = items.filter((item) => item.qualityLevel === 5);
+      const fourStars = items.filter((item) => item.qualityLevel === 4);
+      totalFiveStars += fiveStars.length;
+      totalFourStars += fourStars.length;
+      fiveStarPitySum += fiveStars.reduce(
+        (sum, item) => sum + (item.pity ?? 0),
+        0,
+      );
+      fourStarPitySum += fourStars.reduce(
+        (sum, item) => sum + (item.pity ?? 0),
+        0,
+      );
+    });
+
+    const avgFiveStarPity = totalFiveStars
+      ? fiveStarPitySum / totalFiveStars
+      : 0;
+    const avgFourStarPity = totalFourStars
+      ? fourStarPitySum / totalFourStars
+      : 0;
+
+    return {
+      totalPulls,
+      totalAsterite,
+      totalFiveStars,
+      totalFourStars,
+      avgFiveStarPity,
+      avgFourStarPity,
+    };
+  };
+
+  const summaryStats = calculateSummaryStats();
 
   return (
     <div className="flex flex-col shrink">
@@ -179,98 +259,160 @@ export default function Page() {
         </Button>
       </div>
       {gachaData.length > 0 ? (
-        <div className="mt-4">
-          <h2 className="text-xl font-bold md:text-2xl">Gacha Data</h2>
-          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 lg:grid-cols-3">
-            {gachaData.map((_, index) => (
-              <Button
-                key={`pool-type-${index}`}
-                onClick={() => setSelectedDataIndex(index)}
-                variant={selectedDataIndex === index ? 'default' : 'secondary'}
-              >
-                Card Pool Type {index + 1}
-              </Button>
-            ))}
-          </div>
-          <div className="flex mb-4 space-x-2">
-            <div className="flex flex-col">
-              <div>
-                Total convene count: {totalConveneCount} (asterite x{' '}
-                {totalAsteriteSpent})
-              </div>
-              <div>
-                5-star:{' '}
-                {calculatePityCounts(selectedGachaData).pityCounts.fiveStar}
-              </div>
-              <div>
-                4-star:{' '}
-                {calculatePityCounts(selectedGachaData).pityCounts.fourStar}
-              </div>
-            </div>
-          </div>
-          <div className="flex mb-4 space-x-2">
-            <Button
-              className={getButtonColor(5, starFilter['5'])}
-              onClick={() => handleStarFilterChange('5')}
-              variant={starFilter['5'] ? 'default' : 'secondary'}
+        <div className="mt-4 md:mt-8">
+          <h2 className="mb-2 text-xl font-bold md:text-2xl">Gacha Data</h2>
+          <div className="grid grid-cols-1 gap-4 mb-4 grid-flow-dense sm:grid-cols-2 lg:grid-cols-3">
+            <Card
+              className="col-span-1 sm:col-span-2 lg:col-span-3"
+              id="summary"
             >
-              5 Star
-            </Button>
-            <Button
-              className={getButtonColor(4, starFilter['4'])}
-              onClick={() => handleStarFilterChange('4')}
-              variant={starFilter['4'] ? 'default' : 'secondary'}
-            >
-              4 Star
-            </Button>
-            <Button
-              className={getButtonColor(3, starFilter['3'])}
-              onClick={() => handleStarFilterChange('3')}
-              variant={starFilter['3'] ? 'default' : 'secondary'}
-            >
-              3 Star
-            </Button>
-          </div>
-          <Table>
-            <TableCaption>
-              {noFiltersSelected ? (
-                <div className="text-red-500">
-                  Please select at least one rarity filter.
-                </div>
-              ) : (
-                'A list of your gacha data.'
-              )}
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead className="text-right">Pity</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {calculatePityCounts(selectedGachaData)
-                .items.filter(
-                  (item) =>
-                    starFilter[
-                      item.qualityLevel.toString() as keyof typeof starFilter
-                    ],
-                )
-                .map((item, idx) => (
-                  <TableRow key={`gacha-item-${item.name}-${item.time}-${idx}`}>
-                    <TableCell
-                      className={`font-medium ${getTextColor(item.qualityLevel)}`}
+              <CardHeader>
+                <CardTitle>Summary</CardTitle>
+                <CardDescription>
+                  Summary of your pulls across all banners.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>Total pulls: {summaryStats.totalPulls}</p>
+                <p>Total asterite spent: {summaryStats.totalAsterite}</p>
+                <p>
+                  Total 5-star pulls: {summaryStats.totalFiveStars} (Avg pity:{' '}
+                  {summaryStats.avgFiveStarPity.toFixed(2)})
+                </p>
+                <p>
+                  Total 4-star pulls: {summaryStats.totalFourStars} (Avg pity:{' '}
+                  {summaryStats.avgFourStarPity.toFixed(2)})
+                </p>
+              </CardContent>
+              {/* <CardFooter>
+                <Button>Details</Button>
+              </CardFooter> */}
+            </Card>
+
+            {gachaData.map((poolData, index) => {
+              const { items, pityCounts } = calculatePityCounts(poolData);
+              const totalConveneCount = items.length;
+              const totalAsteriteSpent = totalConveneCount * 160;
+              return (
+                <Card key={`pool-type-${index}`} id={`pool-type-${index + 1}`}>
+                  <CardHeader>
+                    <CardTitle>{conveneType[index]}</CardTitle>
+                    <CardDescription>
+                      Pull details for {conveneType[index]}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>
+                      Total pulls: {totalConveneCount} (Asterite:{' '}
+                      {totalAsteriteSpent})
+                    </p>
+                    <p>5-star pity: {pityCounts.fiveStar}</p>
+                    <p>4-star pity: {pityCounts.fourStar}</p>
+                  </CardContent>
+                  <CardFooter className="flex flex-col">
+                    <Button
+                      onClick={() => handleExpandCollapse(index)}
+                      variant={
+                        expandedConveneRecord[index] ? 'secondary' : 'default'
+                      }
+                      size="sm"
                     >
-                      {item.name}
-                    </TableCell>
-                    <TableCell>{item.time}</TableCell>
-                    <TableCell className="text-right">
-                      {(item.pity ?? 0) + 1}
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+                      {expandedConveneRecord[index] ? 'Collapse' : 'Expand'}
+                    </Button>
+                    {expandedConveneRecord[index] && (
+                      <>
+                        <div className="flex my-4 space-x-2">
+                          <Button
+                            className={getButtonColor(
+                              5,
+                              starFilters[index]['5'],
+                            )}
+                            onClick={() => handleStarFilterChange(index, '5')}
+                            variant={
+                              starFilters[index]['5'] ? 'default' : 'secondary'
+                            }
+                          >
+                            5 Star
+                          </Button>
+                          <Button
+                            className={getButtonColor(
+                              4,
+                              starFilters[index]['4'],
+                            )}
+                            onClick={() => handleStarFilterChange(index, '4')}
+                            variant={
+                              starFilters[index]['4'] ? 'default' : 'secondary'
+                            }
+                          >
+                            4 Star
+                          </Button>
+                          <Button
+                            className={getButtonColor(
+                              3,
+                              starFilters[index]['3'],
+                            )}
+                            onClick={() => handleStarFilterChange(index, '3')}
+                            variant={
+                              starFilters[index]['3'] ? 'default' : 'secondary'
+                            }
+                          >
+                            3 Star
+                          </Button>
+                        </div>
+                        <Table>
+                          <TableCaption>
+                            {noFiltersSelected(index) ? (
+                              <div className="text-red-500">
+                                Please select at least one rarity filter.
+                              </div>
+                            ) : (
+                              'A list of your gacha data.'
+                            )}
+                          </TableCaption>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Name</TableHead>
+                              <TableHead>Time</TableHead>
+                              <TableHead className="text-right">Pity</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {items
+                              .filter(
+                                (item) =>
+                                  starFilters[index][
+                                    item.qualityLevel.toString() as keyof Record<
+                                      string,
+                                      boolean
+                                    >
+                                  ],
+                              )
+                              .map((item, idx) => (
+                                <TableRow
+                                  key={`gacha-item-${item.name}-${item.time}-${idx}`}
+                                >
+                                  <TableCell
+                                    className={`font-medium ${getTextColor(
+                                      item.qualityLevel,
+                                    )}`}
+                                  >
+                                    {item.name}
+                                  </TableCell>
+                                  <TableCell>{item.time}</TableCell>
+                                  <TableCell className="text-right">
+                                    {(item.pity ?? 0) + 1}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </>
+                    )}
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       ) : isFetching ? (
         <p>Loading Gacha data...</p>
