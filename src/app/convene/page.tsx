@@ -53,6 +53,7 @@ export default function Page() {
   const [expandedConveneRecord, setExpandedConveneRecord] = useState<
     Record<number, boolean>
   >({});
+  const [hasLocalData, setHasLocalData] = useState<boolean>(false);
 
   const fetchGachaData = useCallback(
     async (
@@ -110,6 +111,7 @@ export default function Page() {
     if (savedQueryParams) {
       const queryParams = JSON.parse(savedQueryParams);
       fetchAllGachaData(queryParams);
+      setHasLocalData(true);
     }
   }, [fetchAllGachaData]);
 
@@ -252,7 +254,9 @@ export default function Page() {
       </div>
       <div className="space-x-4">
         <Button>
-          <Link href="/convene/import">Import Convenes</Link>
+          <Link href="/convene/import">
+            {hasLocalData ? 'Reimport Convenes' : 'Import Convenes'}
+          </Link>
         </Button>
         <Button variant="secondary">
           <Link href="/">Home</Link>
