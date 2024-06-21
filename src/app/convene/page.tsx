@@ -413,6 +413,14 @@ export default function Page() {
               );
             })}
           </div>
+          <div className="flex justify-center mt-4 md:mt-8">
+            <Button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              variant="secondary"
+            >
+              Back to Top
+            </Button>
+          </div>
         </div>
       ) : isFetching ? (
         <p>Loading Gacha data...</p>
