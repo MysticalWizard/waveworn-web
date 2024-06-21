@@ -81,7 +81,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col flex-wrap gap-4">
-      <h1 className="text-4xl font-extrabold scroll-m-20">
+      <h1 className="text-3xl font-extrabold md:text-4xl scroll-m-20">
         Import Convene History
       </h1>
       <Alert>
@@ -91,11 +91,11 @@ export default function Page() {
           following the instructions!
         </AlertDescription>
       </Alert>
-      <div>
-        <h2 className="text-2xl font-bold">Instructions</h2>
+      <div className="w-full">
+        <h2 className="text-xl font-bold md:text-2xl">Instructions</h2>
         <p>Copy the PowerShell script below and run it in your PowerShell.</p>
-        <div className="flex flex-row mb-2 space-x-2">
-          <pre className="flex-grow p-4 overflow-auto text-sm whitespace-pre-wrap bg-gray-100 rounded-md dark:bg-neutral-800 dark:text-white">
+        <div className="w-full mb-4">
+          <pre className="flex-wrap p-4 mb-2 text-xs break-words whitespace-pre-wrap bg-gray-100 rounded-md sm:text-sm text-wrap dark:bg-neutral-800 dark:text-white">
             {PS_SCRIPT}
           </pre>
           <Button
@@ -106,18 +106,20 @@ export default function Page() {
             {isScriptCopied ? 'Copied!' : 'Copy PowerShell Script'}
           </Button>
         </div>
-        <p>Paste your convene history URL below.</p>
-        <Input
-          name="url-input"
-          type="url"
-          className="flex-grow"
-          placeholder="Paste URL here"
-          value={inputUrl}
-          required
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setInputUrl(e.target.value)
-          }
-        />
+        <div className="w-full">
+          <p>Paste your convene history URL below.</p>
+          <Input
+            name="url-input"
+            type="url"
+            className="flex-grow w-full"
+            placeholder="Paste URL here"
+            value={inputUrl}
+            required
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setInputUrl(e.target.value)
+            }
+          />
+        </div>
       </div>
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex justify-between">

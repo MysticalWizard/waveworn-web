@@ -165,7 +165,9 @@ export default function Page() {
   return (
     <div className="flex flex-col shrink">
       <div className="pb-4">
-        <h1 className="text-4xl font-extrabold scroll-m-20">Convene Tracker</h1>
+        <h1 className="text-3xl font-extrabold md:text-4xl scroll-m-20">
+          Convene Tracker
+        </h1>
         <p>Track your convene history!</p>
       </div>
       <div className="space-x-4">
@@ -178,8 +180,8 @@ export default function Page() {
       </div>
       {gachaData.length > 0 ? (
         <div className="mt-4">
-          <h2 className="text-2xl font-bold">Gacha Data</h2>
-          <div className="flex mb-4 space-x-2">
+          <h2 className="text-xl font-bold md:text-2xl">Gacha Data</h2>
+          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 lg:grid-cols-3">
             {gachaData.map((_, index) => (
               <Button
                 key={`pool-type-${index}`}
