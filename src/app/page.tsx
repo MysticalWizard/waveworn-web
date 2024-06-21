@@ -10,8 +10,8 @@ export default function Home() {
           Welcome to {siteConfig.name}!
         </h1>
         <p className="mt-4 text-md md:text-lg text-stone-500">
-          This website is current in development. Features may break or change.
-          Please report bugs{' '}
+          This website is currently in development. Features may break or
+          change. Please report bugs{' '}
           <Link
             className="text-yellow-600 dark:text-yellow-400 hover:underline"
             href={'https://github.com/MysticalWizard/wuwa-tools/issues'}
