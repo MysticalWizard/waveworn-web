@@ -166,7 +166,7 @@ export default function Page() {
     <div className="flex flex-col shrink">
       <div className="pb-4">
         <h1 className="text-3xl font-extrabold md:text-4xl scroll-m-20">
-          Convene Tracker
+          Convene Counter
         </h1>
         <p>Track your convene history!</p>
       </div>
