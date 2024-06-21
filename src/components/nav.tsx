@@ -36,7 +36,7 @@ export function Nav({
   const [open, setOpen] = React.useState(false);
 
   const pathname = usePathname();
-  const navItems = [{ href: '/convene', label: 'Convene Tracker' }];
+  const navItems = [{ href: '/convene', label: 'Convene Counter' }];
 
   return (
     <>
@@ -80,7 +80,7 @@ export function Nav({
               Navigate through the application using the links below.
             </SheetDescription>
           </SheetHeader>
-          <div className="flex flex-col py-4 gap-4">
+          <div className="flex flex-col gap-4 py-4">
             <SheetClose asChild>
               <Link
                 href="/"
