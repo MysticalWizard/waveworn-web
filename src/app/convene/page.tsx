@@ -39,7 +39,7 @@ const conveneType = [
   'Featured Weapon',
   'Standard Resonator',
   'Standard Weapon',
-  'Beginner Convene',
+  'Beginner',
   "Beginner's Choice",
   'Giveback Custom',
 ];
@@ -298,7 +298,7 @@ export default function Page() {
                   <CardHeader>
                     <CardTitle>{conveneType[index]}</CardTitle>
                     <CardDescription>
-                      Pull details for {conveneType[index]}
+                      Pull details for {conveneType[index]} convene.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
