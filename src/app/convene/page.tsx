@@ -279,11 +279,11 @@ export default function Page() {
               <CardContent>
                 <p>Total pulls: {summaryStats.totalPulls}</p>
                 <p>Total asterite spent: {summaryStats.totalAsterite}</p>
-                <p>
+                <p className={getTextColor(5)}>
                   Total 5-star pulls: {summaryStats.totalFiveStars} (Avg pity:{' '}
                   {summaryStats.avgFiveStarPity.toFixed(2)})
                 </p>
-                <p>
+                <p className={getTextColor(4)}>
                   Total 4-star pulls: {summaryStats.totalFourStars} (Avg pity:{' '}
                   {summaryStats.avgFourStarPity.toFixed(2)})
                 </p>
@@ -298,7 +298,7 @@ export default function Page() {
               const totalConveneCount = items.length;
               const totalAsteriteSpent = totalConveneCount * 160;
               return (
-                <Card key={`pool-type-${index}`} id={`pool-type-${index + 1}`}>
+                <Card key={`pool-type-${index}`} id={conveneType[index]}>
                   <CardHeader>
                     <CardTitle>{conveneType[index]}</CardTitle>
                     <CardDescription>
@@ -310,8 +310,12 @@ export default function Page() {
                       Total pulls: {totalConveneCount} (Asterite:{' '}
                       {totalAsteriteSpent})
                     </p>
-                    <p>5-star pity: {pityCounts.fiveStar}</p>
-                    <p>4-star pity: {pityCounts.fourStar}</p>
+                    <p className={getTextColor(5)}>
+                      5-star pity: {pityCounts.fiveStar}
+                    </p>
+                    <p className={getTextColor(4)}>
+                      4-star pity: {pityCounts.fourStar}
+                    </p>
                   </CardContent>
                   <CardFooter className="flex flex-col">
                     <Button
