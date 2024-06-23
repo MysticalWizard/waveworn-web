@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 const LogoImage = (
   <Image
     src="/icon.png"
-    alt={siteConfig.name}
+    alt="Icon"
     width={256}
     height={256}
     style={{ objectFit: 'contain', width: '100%', height: '100%' }}

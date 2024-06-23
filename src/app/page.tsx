@@ -12,13 +12,13 @@ export default function Home() {
         </h1>
         <p className="mt-4 text-md md:text-lg text-stone-500">
           This website is currently in development. Features may break or
-          change. Please report bugs{' '}
+          change. Please report bugs on{' '}
           <Link
             className="text-yellow-600 dark:text-yellow-400 hover:underline"
             href={'https://github.com/MysticalWizard/wuwa-tools/issues'}
             target="_blank"
           >
-            here
+            GitHub Issues
           </Link>
           .
         </p>
