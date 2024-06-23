@@ -2,6 +2,7 @@ import './globals.css';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
@@ -31,6 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleTagManager gtmId="GTM-MGW6R45Q" />
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
