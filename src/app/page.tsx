@@ -9,11 +9,11 @@ export default function Home() {
       <h1 className="text-3xl font-extrabold md:text-4xl scroll-m-20">
         Welcome to {siteConfig.title}!
       </h1>
-      <p className="mt-4 text-md md:text-lg text-stone-500">
+      <p className="mt-4 text-md md:text-lg text-stone-500 dark:text-stone-400">
         This website is currently in development. Features may break or change.
         Please report bugs on{' '}
         <Link
-          className="text-purple-600 dark:text-yellow-400 hover:underline"
+          className="text-purple-700 dark:text-yellow-400 hover:underline font-medium"
           href={siteConfig.links.repo.web + '/issues'}
           target="_blank"
         >
