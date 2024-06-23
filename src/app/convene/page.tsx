@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
 import Link from 'next/link';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,12 +15,12 @@ import {
 } from '@/components/ui/card';
 import {
   Table,
+  TableBody,
   TableCaption,
+  TableCell,
+  TableHead,
   TableHeader,
   TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
 } from '@/components/ui/table';
 
 const API_SERVER_URL = 'https://gmserver-api.aki-game2.net/gacha/record/query';
