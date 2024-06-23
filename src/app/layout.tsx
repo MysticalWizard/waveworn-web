@@ -18,6 +18,10 @@ export const metadata: Metadata = {
     default: siteConfig.name,
   },
   description: siteConfig.description,
+  alternates: {
+    canonical: '/',
+  },
+  metadataBase: new URL(siteConfig.url),
 };
 
 export default function RootLayout({
