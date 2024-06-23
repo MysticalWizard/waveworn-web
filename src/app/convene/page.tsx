@@ -203,7 +203,7 @@ export default function Page() {
 
   const calculateSummaryStats = () => {
     let totalPulls = 0;
-    let totalAsterite = 0;
+    let totalAstrite = 0;
     let totalFiveStars = 0;
     let totalFourStars = 0;
     let fiveStarPitySum = 0;
@@ -212,7 +212,7 @@ export default function Page() {
     gachaData.forEach((poolData) => {
       const { items } = calculatePityCounts(poolData);
       totalPulls += items.length;
-      totalAsterite += items.length * 160;
+      totalAstrite += items.length * 160;
       const fiveStars = items.filter((item) => item.qualityLevel === 5);
       const fourStars = items.filter((item) => item.qualityLevel === 4);
       totalFiveStars += fiveStars.length;
@@ -236,7 +236,7 @@ export default function Page() {
 
     return {
       totalPulls,
-      totalAsterite,
+      totalAstrite,
       totalFiveStars,
       totalFourStars,
       avgFiveStarPity,
@@ -280,7 +280,7 @@ export default function Page() {
               </CardHeader>
               <CardContent>
                 <p>Total pulls: {summaryStats.totalPulls}</p>
-                <p>Total asterite spent: {summaryStats.totalAsterite}</p>
+                <p>Total astrite spent: {summaryStats.totalAstrite}</p>
                 <p className={getTextColor(5)}>
                   Total 5-star pulls: {summaryStats.totalFiveStars} (Avg pity:{' '}
                   {summaryStats.avgFiveStarPity.toFixed(2)})
@@ -298,7 +298,7 @@ export default function Page() {
             {gachaData.map((poolData, index) => {
               const { items, pityCounts } = calculatePityCounts(poolData);
               const totalConveneCount = items.length;
-              const totalAsteriteSpent = totalConveneCount * 160;
+              const totalAstriteSpent = totalConveneCount * 160;
               return (
                 <Card key={`pool-type-${index}`} id={conveneType[index]}>
                   <CardHeader>
@@ -309,8 +309,8 @@ export default function Page() {
                   </CardHeader>
                   <CardContent>
                     <p>
-                      Total pulls: {totalConveneCount} (Asterite:{' '}
-                      {totalAsteriteSpent})
+                      Total pulls: {totalConveneCount} (Astrite:{' '}
+                      {totalAstriteSpent})
                     </p>
                     <p className={getTextColor(5)}>
                       5-star pity: {pityCounts.fiveStar}
