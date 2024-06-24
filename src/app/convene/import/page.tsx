@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import { useCallback, useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,77 +9,58 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const PS_SCRIPT: string = `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex "&{$((New-Object System.Net.WebClient).DownloadString('https://static.mystwiz.net/wutheringwaves/getlink.ps1'))}"`;
-const VALID_URL_PATH: string =
+const PS_SCRIPT = `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex "&{$((New-Object System.Net.WebClient).DownloadString('https://static.mystwiz.net/wutheringwaves/getlink.ps1'))}"`;
+const VALID_URL_PATH =
   'https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html';
 
-export default function Page() {
-  const [inputUrl, setInputUrl] = useState<string>('');
-  const [isBusy, setIsBusy] = useState<boolean>(false);
-  const [isScriptCopied, setIsScriptCopied] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+export default function ImportConveneHistory() {
+  const [inputUrl, setInputUrl] = useState('');
+  const [isBusy, setIsBusy] = useState(false);
+  const [isScriptCopied, setIsScriptCopied] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  async function handleImport(): Promise<void> {
-    if (isBusy) return;
-
-    if (!inputUrl) {
-      setError(
-        'Please paste your convene history URL in the input field above.',
-      );
+  const handleImport = useCallback(async () => {
+    if (isBusy || !inputUrl) {
+      !inputUrl &&
+        setError(
+          'Please paste your convene history URL in the input field above.',
+        );
       return;
     }
 
-    try {
-      setIsBusy(true);
-      setError('');
-      const url = new URL(inputUrl);
+    setIsBusy(true);
+    setError('');
 
-      validateUrl(url);
-      const queryParams = extractQueryParams(url);
-      localStorage.setItem('gachaQueryParams', JSON.stringify(queryParams)); // Save query params to localStorage
-      router.push('/convene'); // Redirect to /convene
-    } catch (error: unknown) {
-      handleError(error);
+    try {
+      const url = new URL(inputUrl);
+      if (url.origin + url.pathname !== VALID_URL_PATH) {
+        throw new Error('Please provide the URL of your convene history page.');
+      }
+
+      const queryParams = Object.fromEntries(
+        new URLSearchParams(url.hash.split('?')[1]),
+      );
+      localStorage.setItem('gachaQueryParams', JSON.stringify(queryParams));
+      router.push('/convene');
+    } catch (error) {
+      console.error('An error occurred:', error);
+      setError(
+        error instanceof Error ? error.message : 'An unknown error occurred.',
+      );
     } finally {
       setIsBusy(false);
     }
-  }
+  }, [inputUrl, isBusy, router]);
 
-  function validateUrl(url: URL): void {
-    if (url.origin + url.pathname !== VALID_URL_PATH) {
-      throw new Error('Please provide the URL of your convene history page.');
-    }
-  }
-
-  function extractQueryParams(url: URL): { [key: string]: string } {
-    const queryParams: { [key: string]: string } = {};
-    const searchParams = new URLSearchParams(url.hash.split('?')[1]);
-
-    searchParams.forEach((value, key) => {
-      queryParams[key] = value;
-    });
-
-    return queryParams;
-  }
-
-  async function copyPowerShellScript(): Promise<void> {
+  const copyPowerShellScript = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(PS_SCRIPT);
       setIsScriptCopied(true);
     } catch (error) {
       console.error('An error occurred while copying the script:', error);
     }
-  }
-
-  function handleError(error: unknown): void {
-    console.error('An error occurred:', error);
-    if (error instanceof Error) {
-      setError(error.message);
-    } else {
-      setError('An unknown error occurred.');
-    }
-  }
+  }, []);
 
   return (
     <div className="flex flex-col flex-wrap gap-4">
@@ -117,9 +98,7 @@ export default function Page() {
             placeholder="Paste URL here"
             value={inputUrl}
             required
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setInputUrl(e.target.value)
-            }
+            onChange={(e) => setInputUrl(e.target.value)}
           />
         </div>
       </div>
