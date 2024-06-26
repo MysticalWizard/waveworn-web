@@ -154,8 +154,8 @@ export default function ConvenePage() {
       items: GachaItem[];
       pityCounts: { fiveStar: number; fourStar: number };
     } => {
-      let fiveStarPity = 1;
-      let fourStarPity = 1;
+      let fiveStarPity = 0;
+      let fourStarPity = 0;
       const itemsWithPity = data
         .slice()
         .reverse()
