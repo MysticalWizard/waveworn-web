@@ -162,11 +162,13 @@ export default function ConvenePage() {
         .map((item) => {
           const itemWithPity = { ...item, pity: item.pity ?? 0 };
           if (item.qualityLevel === 5) {
+            fiveStarPity++;
             itemWithPity.pity = fiveStarPity;
-            fiveStarPity = fourStarPity = 1;
+            fiveStarPity = fourStarPity = 0;
           } else if (item.qualityLevel === 4) {
+            fourStarPity++;
             itemWithPity.pity = fourStarPity;
-            fourStarPity = 1;
+            fourStarPity = 0;
             fiveStarPity++;
           } else {
             itemWithPity.pity = 1;
