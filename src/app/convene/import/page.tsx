@@ -9,8 +9,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const PS_SCRIPT =
-  '[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12; Invoke-Expression (New-Object Net.WebClient).DownloadString("https://static.mystwiz.net/wutheringwaves/getlink.ps1")';
+const PS_URL =
+  'https://gist.githubusercontent.com/MysticalWizard/c191af2e1ed1f8080994f8b3659d38f4/raw/96dd02c3e751aa6ef4f49c53d6cd0cbc9e5c01f4/getConveneLink.ps1';
+const PS_SCRIPT = `[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12; Invoke-Expression (New-Object Net.WebClient).DownloadString("${PS_URL}")`;
 const VALID_URL_PATH =
   'https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html';
 
