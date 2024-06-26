@@ -154,8 +154,8 @@ export default function ConvenePage() {
       items: GachaItem[];
       pityCounts: { fiveStar: number; fourStar: number };
     } => {
-      let fiveStarPity = 0;
-      let fourStarPity = 0;
+      let fiveStarPity = 1;
+      let fourStarPity = 1;
       const itemsWithPity = data
         .slice()
         .reverse()
@@ -163,13 +163,13 @@ export default function ConvenePage() {
           const itemWithPity = { ...item, pity: item.pity ?? 0 };
           if (item.qualityLevel === 5) {
             itemWithPity.pity = fiveStarPity;
-            fiveStarPity = fourStarPity = 0;
+            fiveStarPity = fourStarPity = 1;
           } else if (item.qualityLevel === 4) {
             itemWithPity.pity = fourStarPity;
-            fourStarPity = 0;
+            fourStarPity = 1;
             fiveStarPity++;
           } else {
-            itemWithPity.pity = 0;
+            itemWithPity.pity = 1;
             fourStarPity++;
             fiveStarPity++;
           }
@@ -429,7 +429,7 @@ function GachaTable({ items, starFilters }: GachaTableProps) {
               {item.name}
             </TableCell>
             <TableCell>{item.time}</TableCell>
-            <TableCell className="text-right">{(item.pity ?? 0) + 1}</TableCell>
+            <TableCell className="text-right">{item.pity ?? 0}</TableCell>
           </TableRow>
         ))}
       </TableBody>
