@@ -9,7 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const PS_SCRIPT = `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex "&{$((New-Object System.Net.WebClient).DownloadString('https://static.mystwiz.net/wutheringwaves/getlink.ps1'))}"`;
+const PS_SCRIPT =
+  '[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12; Invoke-Expression (New-Object Net.WebClient).DownloadString("https://static.mystwiz.net/wutheringwaves/getlink.ps1")';
 const VALID_URL_PATH =
   'https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html';
 
